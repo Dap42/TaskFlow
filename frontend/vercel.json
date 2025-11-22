@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://your-production-backend.com/:path*"
+    }
+  ]
+}
