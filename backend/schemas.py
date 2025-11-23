@@ -78,3 +78,26 @@ class Subtask(SubtaskBase):
 
     class Config:
         from_attributes = True
+
+
+class AIInsight(BaseModel):
+    type: str  # success, warning, info
+    title: str
+    description: str
+
+
+class AIStats(BaseModel):
+    total: int
+    completed: int
+    pending: int
+    overdue: int
+    highPriority: int
+    completionRate: int
+
+
+class AISummaryResponse(BaseModel):
+    stats: AIStats
+    insights: List[AIInsight]
+    actionItems: List[str]
+    topTasks: List[Task]
+
