@@ -3,15 +3,7 @@
 import { useState, useEffect } from "react";
 import { Spinner } from "./ui/spinner";
 
-interface Task {
-  id?: string;
-  title: string;
-  description: string;
-  category: string;
-  priority: string;
-  status?: string;
-  deadline: string;
-}
+import { Task } from "../types";
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -29,6 +21,7 @@ export default function TaskModal({
   title,
 }: TaskModalProps) {
   const [task, setTask] = useState<Task>({
+    id: "",
     title: "",
     description: "",
     category: "Work",
@@ -48,6 +41,7 @@ export default function TaskModal({
       });
     } else {
       setTask({
+        id: "",
         title: "",
         description: "",
         category: "Work",

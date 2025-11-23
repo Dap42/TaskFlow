@@ -14,12 +14,13 @@ import { useState, useEffect } from "react";
 import { Spinner } from "./ui/spinner";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
+import { Task } from "../types";
 
 interface TaskCardProps {
-  task: any;
+  task: Task;
   onStatusChange: (id: string, status: string) => void;
   onDelete: (id: string) => void;
-  onEdit: (task: any) => void;
+  onEdit: (task: Task) => void;
   isDeleting?: boolean;
   isUpdatingStatus?: boolean;
 }

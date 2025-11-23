@@ -2,11 +2,13 @@ import React from "react";
 import { useDraggable } from "@dnd-kit/core";
 import TaskCard from "./TaskCard";
 
+import { Task } from "../types";
+
 interface DraggableTaskCardProps {
-  task: any;
+  task: Task;
   onStatusChange: (id: string, status: string) => void;
   onDelete: (id: string) => void;
-  onEdit: (task: any) => void;
+  onEdit: (task: Task) => void;
   isDeleting?: boolean;
 }
 

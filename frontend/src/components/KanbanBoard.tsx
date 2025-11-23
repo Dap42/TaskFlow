@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Task } from "../types";
 import {
   DndContext,
   closestCorners,
@@ -11,6 +12,7 @@ import {
   DragOverlay,
   DragStartEvent,
   DragEndEvent,
+  useDroppable
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,7 +20,6 @@ import { RootState } from "../store/store";
 import { setTasks, updateTask, deleteTask } from "../store/tasksSlice";
 import TaskCard from "./TaskCard";
 import DraggableTaskCard from "./DraggableTaskCard";
-import { useDroppable } from "@dnd-kit/core";
 import { toast } from "sonner";
 import TaskModal from "./TaskModal";
 
@@ -72,9 +73,35 @@ export default function KanbanBoard() {
   });
   const dispatch = useDispatch();
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [editingTask, setEditingTask] = useState<any>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
+
+  const handleUpdateTask = async (task: Task) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/tasks/${task.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(task),
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        dispatch(updateTask(data));
+        toast.success("Task updated successfully");
+        setEditingTask(null);
+        setShowEditModal(false);
+      }
+    } catch (error) {
+      console.error("Failed to update task");
+      toast.error("Failed to update task");
+    }
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -159,31 +186,6 @@ export default function KanbanBoard() {
     }
   };
 
-  const handleUpdateTask = async (task: any) => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/tasks/${task.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(task),
-        }
-      );
-      if (res.ok) {
-        const data = await res.json();
-        dispatch(updateTask(data));
-        toast.success("Task updated successfully");
-      }
-    } catch (error) {
-      console.error("Failed to update task");
-      toast.error("Failed to update task");
-      throw error;
-    }
-  };
-
   return (
     <div className="h-full overflow-x-auto pb-4">
       <DndContext
@@ -228,7 +230,7 @@ export default function KanbanBoard() {
           {activeId ? (
             <div className="opacity-80 rotate-3 scale-105 cursor-grabbing">
               <TaskCard
-                task={tasks.find((t) => t.id === activeId)}
+                task={tasks.find((t) => t.id === activeId)!}
                 onStatusChange={() => {}}
                 onDelete={() => {}}
                 onEdit={() => {}}
