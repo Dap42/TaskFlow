@@ -25,6 +25,7 @@ import DashboardStats from "@/components/dashboard/DashboardStats";
 import AISummaryCard from "@/components/dashboard/AISummaryCard";
 import { Onboarding } from "@/components/Onboarding";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
+import AuthGuard from "@/components/AuthGuard";
 
 interface Task {
   id: string;
@@ -259,12 +260,9 @@ export default function Dashboard() {
     todo: tasks.filter((t) => t.status === "pending").length,
   }), [tasks]);
 
-import AuthGuard from "@/components/AuthGuard";
 
-// ... existing imports
 
-export default function Dashboard() {
-  // ... existing hooks
+
 
   return (
     <AuthGuard>

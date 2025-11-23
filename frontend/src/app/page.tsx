@@ -8,6 +8,8 @@ import {
   useInView,
   useAnimation,
 } from "framer-motion";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {

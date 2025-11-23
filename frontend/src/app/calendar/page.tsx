@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
 import Link from "next/link";
+import AuthGuard from "@/components/AuthGuard";
 
 
 interface Task {
@@ -19,7 +20,7 @@ interface Task {
   deadline: string;
 }
 
-import AuthGuard from "@/components/AuthGuard";
+
 
 // ... existing imports
 
