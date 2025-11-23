@@ -23,6 +23,7 @@ interface TaskCardProps {
   onEdit: (task: Task) => void;
   isDeleting?: boolean;
   isUpdatingStatus?: boolean;
+  onClick?: () => void;
 }
 
 export default function TaskCard({
@@ -32,6 +33,7 @@ export default function TaskCard({
   onEdit,
   isDeleting = false,
   isUpdatingStatus = false,
+  onClick,
 }: TaskCardProps) {
   const isCompleted = task.status === "completed";
   const [timeLeft, setTimeLeft] = useState("");
@@ -91,6 +93,7 @@ export default function TaskCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9 }}
+      onClick={onClick}
     >
       <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-primary">
         <CardContent className="p-6">
@@ -147,7 +150,10 @@ export default function TaskCard({
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
+          <div 
+            className="flex justify-end gap-2 mt-4 pt-4 border-t"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Link href={`/tasks/${task.id}`}>
               <button className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded-full transition">
                 <Eye size={18} />

@@ -359,6 +359,7 @@ export default function Dashboard() {
                   }}
                   isDeleting={deletingTaskId === task.id}
                   isUpdatingStatus={updatingStatusTaskId === task.id}
+                  onClick={() => router.push(`/tasks/${task.id}`)}
                 />
               ))}
             </div>
