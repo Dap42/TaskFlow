@@ -34,8 +34,8 @@ async def generate_summary(current_user: models.User = Depends(get_current_user)
     
     # Calculate overdue (naive check, assuming deadline is naive or UTC)
     # In a real app, handle timezones carefully.
-    from datetime import datetime
-    now = datetime.now()
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc)
     overdue_tasks = [
         t for t in tasks 
         if t.deadline and t.deadline < now and t.status != "completed"
@@ -145,7 +145,7 @@ async def generate_summary(current_user: models.User = Depends(get_current_user)
     
     def task_sort_key(t):
         # Sort by deadline (nulls last), then priority
-        d = t.deadline if t.deadline else datetime.max
+        d = t.deadline if t.deadline else datetime.max.replace(tzinfo=timezone.utc)
         p_rank = {"high": 0, "medium": 1, "low": 2}.get(t.priority, 3)
         return (d, p_rank)
 
