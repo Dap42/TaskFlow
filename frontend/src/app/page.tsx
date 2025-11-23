@@ -465,7 +465,7 @@ export default function Home() {
                                 in...
                               </>
                             ) : (
-                              "Sign In"
+                              "Log In"
                             )}
                           </Button>
                         </form>
