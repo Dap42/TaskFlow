@@ -22,7 +22,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
-import { setTasks, updateTask, deleteTask } from "../store/tasksSlice";
+import { setTasks, updateTask, deleteTask, moveTaskOptimistic } from "../store/tasksSlice";
 import TaskCard from "./TaskCard";
 import DraggableTaskCard from "./DraggableTaskCard";
 import { toast } from "sonner";
@@ -143,8 +143,22 @@ export default function KanbanBoard() {
     if (isActiveTask && isOverTask) {
       if (isActiveTask.status !== isOverTask.status) {
         // Optimistic update for drag over different columns
-        // In a real sortable implementation, we would update the local state here to show the placeholder
-        // For now, we rely on the backend update in dragEnd, but SortableContext needs items to be passed correctly
+        dispatch(
+          moveTaskOptimistic({
+            id: activeId as string,
+            status: isOverTask.status,
+          })
+        );
+      }
+    } else if (columns.includes(overId as string)) {
+      // Dropping over a column directly
+      if (isActiveTask.status !== overId) {
+        dispatch(
+          moveTaskOptimistic({
+            id: activeId as string,
+            status: overId as string,
+          })
+        );
       }
     }
   };
@@ -222,7 +236,7 @@ export default function KanbanBoard() {
   };
 
   return (
-    <div className="h-full overflow-x-auto pb-4">
+    <div className="h-full overflow-x-auto pb-4 scrollbar-hide">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}

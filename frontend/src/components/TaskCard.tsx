@@ -24,6 +24,7 @@ interface TaskCardProps {
   isDeleting?: boolean;
   isUpdatingStatus?: boolean;
   onClick?: () => void;
+  className?: string;
 }
 
 export default function TaskCard({
@@ -34,6 +35,7 @@ export default function TaskCard({
   isDeleting = false,
   isUpdatingStatus = false,
   onClick,
+  className,
 }: TaskCardProps) {
   const isCompleted = task.status === "completed";
   const [timeLeft, setTimeLeft] = useState("");
@@ -95,7 +97,7 @@ export default function TaskCard({
       exit={{ opacity: 0, scale: 0.9 }}
       onClick={onClick}
     >
-      <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-primary">
+      <Card className={`hover:shadow-lg transition-all border-2 hover:border-primary ${className || "cursor-pointer"}`}>
         <CardContent className="p-6">
           <div className="flex items-start justify-between">
             <div className="flex-1">

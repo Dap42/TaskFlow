@@ -51,6 +51,7 @@ export default function DraggableTaskCard({
           onDelete={onDelete}
           onEdit={onEdit}
           isDeleting={isDeleting}
+          className="cursor-grabbing"
         />
       </div>
     );
@@ -62,7 +63,7 @@ export default function DraggableTaskCard({
       style={style}
       {...listeners}
       {...attributes}
-      className="cursor-grab active:cursor-grabbing"
+      className="touch-none"
     >
       <TaskCard
         task={task}
@@ -70,6 +71,7 @@ export default function DraggableTaskCard({
         onDelete={onDelete}
         onEdit={onEdit}
         isDeleting={isDeleting}
+        className="cursor-grab active:cursor-grabbing"
       />
     </div>
   );

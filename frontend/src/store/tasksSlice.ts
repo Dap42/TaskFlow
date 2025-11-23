@@ -49,6 +49,15 @@ const tasksSlice = createSlice({
     deleteTask: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((t) => t.id !== action.payload);
     },
+    moveTaskOptimistic: (
+      state,
+      action: PayloadAction<{ id: string; status: string }>
+    ) => {
+      const index = state.items.findIndex((t) => t.id === action.payload.id);
+      if (index !== -1) {
+        state.items[index].status = action.payload.status;
+      }
+    },
     setFilter: (
       state,
       action: PayloadAction<Partial<TasksState["filter"]>>
@@ -58,6 +67,6 @@ const tasksSlice = createSlice({
   },
 });
 
-export const { setTasks, addTask, updateTask, deleteTask, setFilter } =
+export const { setTasks, addTask, updateTask, deleteTask, setFilter, moveTaskOptimistic } =
   tasksSlice.actions;
 export default tasksSlice.reducer;
