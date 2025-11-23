@@ -133,6 +133,16 @@ export function Navbar() {
                     Kanban
                   </Button>
                 </Link>
+                <Link href="/calendar">
+                  <Button
+                    variant={pathname === "/calendar" ? "secondary" : "ghost"}
+                    size="sm"
+                    className="gap-2"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    Calendar
+                  </Button>
+                </Link>
                 <Link href="/ai-summary">
                   <Button
                     variant={pathname === "/ai-summary" ? "secondary" : "ghost"}

@@ -19,6 +19,10 @@ interface Task {
   deadline: string;
 }
 
+import AuthGuard from "@/components/AuthGuard";
+
+// ... existing imports
+
 export default function CalendarPage() {
   const router = useRouter();
   const { token, isAuthenticated } = useSelector(
@@ -28,11 +32,7 @@ export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login");
-      return;
-    }
-
+    // Manual redirect removed
     const fetchTasks = async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks/`, {
@@ -47,9 +47,12 @@ export default function CalendarPage() {
       }
     };
 
-    fetchTasks();
+    if (isAuthenticated) {
+        fetchTasks();
+    }
   }, [isAuthenticated, token, router]);
 
+  // ... (keep helper functions: getDaysInMonth, getTasksForDate, previousMonth, nextMonth, getPriorityColor)
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -125,90 +128,92 @@ export default function CalendarPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <AuthGuard>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
 
-      <div className="container mx-auto p-6">
-        <Card className="border-2">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <CalendarIcon className="w-6 h-6" />
-                Calendar View
-              </CardTitle>
-              <div className="flex items-center gap-4">
-                <Button variant="outline" size="icon" onClick={previousMonth}>
-                  <ChevronLeft className="w-4 h-4" />
-                </Button>
-                <span className="text-xl font-semibold">
-                  {monthNames[month]} {year}
-                </span>
-                <Button variant="outline" size="icon" onClick={nextMonth}>
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-2">
-              {/* Day Headers */}
-              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                <div
-                  key={day}
-                  className="text-center font-semibold text-sm p-2 bg-muted rounded"
-                >
-                  {day}
+        <div className="container mx-auto p-6">
+          <Card className="border-2">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <CalendarIcon className="w-6 h-6" />
+                  Calendar View
+                </CardTitle>
+                <div className="flex items-center gap-4">
+                  <Button variant="outline" size="icon" onClick={previousMonth}>
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  <span className="text-xl font-semibold">
+                    {monthNames[month]} {year}
+                  </span>
+                  <Button variant="outline" size="icon" onClick={nextMonth}>
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
                 </div>
-              ))}
-
-              {/* Calendar Days */}
-              {days.map((day, index) => {
-                if (day === null) {
-                  return <div key={`empty-${index}`} className="p-2"></div>;
-                }
-
-                const date = new Date(year, month, day);
-                const dayTasks = getTasksForDate(date);
-                const isToday =
-                  new Date().getDate() === day &&
-                  new Date().getMonth() === month &&
-                  new Date().getFullYear() === year;
-
-                return (
+              </div>
+            </CardHeader>
+            <CardContent>
+              {/* Calendar Grid */}
+              <div className="grid grid-cols-7 gap-2">
+                {/* Day Headers */}
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                   <div
                     key={day}
-                    className={`min-h-[100px] p-2 border rounded-lg ${
-                      isToday
-                        ? "bg-primary/10 border-primary border-2"
-                        : "bg-background"
-                    }`}
+                    className="text-center font-semibold text-sm p-2 bg-muted rounded"
                   >
-                    <div className="font-semibold text-sm mb-1">{day}</div>
-                    <div className="space-y-1">
-                      {dayTasks.map((task) => (
-                        <Link
-                          key={task.id}
-                          href={`/tasks/${task.id}`}
-                          className="block"
-                        >
-                          <div
-                            className={`text-xs p-1 rounded ${getPriorityColor(
-                              task.priority
-                            )} text-white truncate hover:opacity-80 transition-opacity cursor-pointer`}
-                            title={task.title}
-                          >
-                            {task.title}
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
+                    {day}
                   </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+
+                {/* Calendar Days */}
+                {days.map((day, index) => {
+                  if (day === null) {
+                    return <div key={`empty-${index}`} className="p-2"></div>;
+                  }
+
+                  const date = new Date(year, month, day);
+                  const dayTasks = getTasksForDate(date);
+                  const isToday =
+                    new Date().getDate() === day &&
+                    new Date().getMonth() === month &&
+                    new Date().getFullYear() === year;
+
+                  return (
+                    <div
+                      key={day}
+                      className={`min-h-[100px] p-2 border rounded-lg ${
+                        isToday
+                          ? "bg-primary/10 border-primary border-2"
+                          : "bg-background"
+                      }`}
+                    >
+                      <div className="font-semibold text-sm mb-1">{day}</div>
+                      <div className="space-y-1">
+                        {dayTasks.map((task) => (
+                          <Link
+                            key={task.id}
+                            href={`/tasks/${task.id}`}
+                            className="block"
+                          >
+                            <div
+                              className={`text-xs p-1 rounded ${getPriorityColor(
+                                task.priority
+                              )} text-white truncate hover:opacity-80 transition-opacity cursor-pointer`}
+                              title={task.title}
+                            >
+                              {task.title}
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 }

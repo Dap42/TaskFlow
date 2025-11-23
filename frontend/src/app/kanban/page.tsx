@@ -9,6 +9,10 @@ import { useRouter } from "next/navigation";
 import { setTasks } from "../../store/tasksSlice";
 import { toast } from "sonner";
 
+import AuthGuard from "../../components/AuthGuard";
+
+// ... existing imports
+
 export default function KanbanPage() {
   const { token, isAuthenticated } = useSelector(
     (state: RootState) => state.auth
@@ -17,11 +21,7 @@ export default function KanbanPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login");
-      return;
-    }
-
+    // Manual redirect removed in favor of AuthGuard
     const fetchTasks = async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tasks/`, {
@@ -37,18 +37,22 @@ export default function KanbanPage() {
       }
     };
 
-    fetchTasks();
+    if (isAuthenticated) {
+        fetchTasks();
+    }
   }, [isAuthenticated, token, dispatch, router]);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
+    <AuthGuard>
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
 
-      <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">
-          Kanban Board
-        </h1>
-        <KanbanBoard />
+        <div className="container mx-auto p-6">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">
+            Kanban Board
+          </h1>
+          <KanbanBoard />
+        </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 }

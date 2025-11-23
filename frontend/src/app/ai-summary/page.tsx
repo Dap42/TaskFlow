@@ -25,6 +25,10 @@ import { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 
+import AuthGuard from "@/components/AuthGuard";
+
+// ... existing imports
+
 export default function AISummary() {
   const { token, isAuthenticated } = useSelector(
     (state: RootState) => state.auth
@@ -35,11 +39,7 @@ export default function AISummary() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/");
-      return;
-    }
-
+    // Manual redirect removed
     const fetchSummary = async () => {
       setIsLoading(true);
       setError("");
@@ -67,54 +67,60 @@ export default function AISummary() {
       }
     };
 
-    fetchSummary();
+    if (isAuthenticated) {
+        fetchSummary();
+    }
   }, [isAuthenticated, router, token]);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <Sparkles className="w-12 h-12 animate-spin mx-auto mb-4 text-primary" />
-          <div className="text-lg">Generating AI insights...</div>
+      <AuthGuard>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+          <div className="text-center">
+            <Sparkles className="w-12 h-12 animate-spin mx-auto mb-4 text-primary" />
+            <div className="text-lg">Generating AI insights...</div>
+          </div>
         </div>
-      </div>
+      </AuthGuard>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <AuthGuard>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Card className="border-2 border-primary bg-gradient-to-r from-blue-500/10 to-purple-500/10">
-          <CardHeader>
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary/20 rounded-full">
-                <Brain className="w-8 h-8 text-primary" />
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+          <Card className="border-2 border-primary bg-gradient-to-r from-blue-500/10 to-purple-500/10">
+            <CardHeader>
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-primary/20 rounded-full">
+                  <Brain className="w-8 h-8 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl">
+                    Your Productivity Insights
+                  </CardTitle>
+                  <CardDescription>
+                    AI-powered analysis of your recent task activity
+                  </CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-2xl">
-                  Your Productivity Insights
-                </CardTitle>
-                <CardDescription>
-                  AI-powered analysis of your recent task activity
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="p-6">
-            {error ? (
-              <div className="text-red-500 flex items-center gap-2">
-                <AlertTriangle />
-                <p>{error}</p>
-              </div>
-            ) : (
-              <div className="prose dark:prose-invert max-w-none">
-                <ReactMarkdown>{summary}</ReactMarkdown>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent className="p-6">
+              {error ? (
+                <div className="text-red-500 flex items-center gap-2">
+                  <AlertTriangle />
+                  <p>{error}</p>
+                </div>
+              ) : (
+                <div className="prose dark:prose-invert max-w-none">
+                  <ReactMarkdown>{summary}</ReactMarkdown>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 }

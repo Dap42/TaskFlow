@@ -17,6 +17,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
 import { setTasks, updateTask, deleteTask } from "../store/tasksSlice";
 import TaskCard from "./TaskCard";
+import DraggableTaskCard from "./DraggableTaskCard";
 import { useDroppable } from "@dnd-kit/core";
 import { toast } from "sonner";
 import TaskModal from "./TaskModal";
@@ -207,7 +208,7 @@ export default function KanbanBoard() {
                 count={columnTasks.length}
               >
                 {columnTasks.map((task) => (
-                  <TaskCard
+                  <DraggableTaskCard
                     key={task.id}
                     task={task}
                     onStatusChange={handleStatusChange}
