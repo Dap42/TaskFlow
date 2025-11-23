@@ -122,6 +122,6 @@ async def delete_task(db: AsyncSession, task_id: str, user_id: str):
     if not db_task:
         return None
 
-    await db.execute(delete(models.Task).where(models.Task.id == task_id))
+    await db.delete(db_task)
     await db.commit()
     return db_task
