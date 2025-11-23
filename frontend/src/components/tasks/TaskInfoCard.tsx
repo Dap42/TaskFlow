@@ -220,14 +220,14 @@ export default function TaskInfoCard({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="todo">To Do</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="in_progress">In Progress</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
                 </SelectContent>
               </Select>
             ) : (
               <Badge variant="secondary" className="capitalize w-fit">
-                {task.status.replace("-", " ")}
+                {task.status.replace("_", " ")}
               </Badge>
             )}
           </div>

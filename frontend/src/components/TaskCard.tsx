@@ -79,7 +79,7 @@ export default function TaskCard({
     switch (status) {
       case "completed":
         return <CheckCircle2 className="w-5 h-5 text-green-500" />;
-      case "in-progress":
+      case "in_progress":
         return <Clock className="w-5 h-5 text-blue-500" />;
       case "pending":
       case "todo":
@@ -126,7 +126,7 @@ export default function TaskCard({
                   {task.priority}
                 </Badge>
                 <Badge variant="secondary" className="capitalize">
-                  {task.status.replace("-", " ")}
+                  {task.status.replace("_", " ")}
                 </Badge>
               </div>
             </div>
