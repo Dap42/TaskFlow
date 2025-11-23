@@ -256,7 +256,7 @@ export default function Dashboard() {
   const stats = useMemo(() => ({
     total: tasks.length,
     completed: tasks.filter((t) => t.status === "completed").length,
-    inProgress: tasks.filter((t) => t.status === "in-progress").length,
+    inProgress: tasks.filter((t) => t.status === "in_progress").length,
     todo: tasks.filter((t) => t.status === "pending").length,
   }), [tasks]);
 

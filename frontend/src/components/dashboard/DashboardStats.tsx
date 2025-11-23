@@ -17,7 +17,7 @@ export default function DashboardStats({ stats }: DashboardStatsProps) {
     { label: "Total Tasks", value: stats.total, borderColor: "border-2" },
     { label: "Completed", value: stats.completed, borderColor: "border-2 border-green-200 dark:border-green-900", textColor: "text-green-600" },
     { label: "In Progress", value: stats.inProgress, borderColor: "border-2 border-blue-200 dark:border-blue-900", textColor: "text-blue-600" },
-    { label: "To Do", value: stats.todo, borderColor: "border-2 border-gray-200 dark:border-gray-700", textColor: "text-gray-600" },
+    { label: "Pending", value: stats.todo, borderColor: "border-2 border-yellow-200 dark:border-yellow-900", textColor: "text-yellow-600" },
   ];
 
   return (
