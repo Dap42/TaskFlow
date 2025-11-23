@@ -188,6 +188,8 @@ export default function CreateTaskDialog({
                 value={time}
                 onChange={handleTimeChange}
                 required
+                className="cursor-pointer"
+                onClick={(e) => e.currentTarget.showPicker()}
               />
             </div>
           </div>
