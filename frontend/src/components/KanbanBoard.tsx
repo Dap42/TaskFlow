@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { Task } from "../types";
 import {
@@ -12,9 +10,14 @@ import {
   DragOverlay,
   DragStartEvent,
   DragEndEvent,
-  useDroppable
+  useDroppable,
+  DragOverEvent,
 } from "@dnd-kit/core";
-import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
 import { setTasks, updateTask, deleteTask } from "../store/tasksSlice";
@@ -38,7 +41,7 @@ function DroppableColumn({
   return (
     <div
       ref={setNodeRef}
-      className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl min-w-[320px] flex flex-col gap-4 h-full shadow-inner"
+      className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl min-w-[320px] flex flex-col gap-4 h-full shadow-inner overflow-x-hidden"
     >
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-lg font-bold text-gray-700 dark:text-gray-200 capitalize flex items-center gap-2">
@@ -120,6 +123,30 @@ export default function KanbanBoard() {
     setActiveId(event.active.id as string);
   };
 
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
+
+    const isActiveTask = active.data.current?.task;
+    const isOverTask = over.data.current?.task;
+
+    if (!isActiveTask) return;
+
+    // Dropping over another task
+    if (isActiveTask && isOverTask) {
+      if (isActiveTask.status !== isOverTask.status) {
+        // Optimistic update for drag over different columns
+        // In a real sortable implementation, we would update the local state here to show the placeholder
+        // For now, we rely on the backend update in dragEnd, but SortableContext needs items to be passed correctly
+      }
+    }
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
@@ -136,6 +163,12 @@ export default function KanbanBoard() {
       if (activeTask.status !== overId) {
         await handleStatusChange(activeTask.id, overId as string);
       }
+    } else {
+       // If dropped over another task, check if it's in a different column
+       const overTask = tasks.find((t) => t.id === overId);
+       if (overTask && activeTask.status !== overTask.status) {
+          await handleStatusChange(activeTask.id, overTask.status);
+       }
     }
   };
 
@@ -192,6 +225,7 @@ export default function KanbanBoard() {
         sensors={sensors}
         collisionDetection={closestCorners}
         onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
         <div className="flex gap-6 p-4 min-w-max">
@@ -209,19 +243,24 @@ export default function KanbanBoard() {
                 title={colId}
                 count={columnTasks.length}
               >
-                {columnTasks.map((task) => (
-                  <DraggableTaskCard
-                    key={task.id}
-                    task={task}
-                    onStatusChange={handleStatusChange}
-                    onDelete={handleDelete}
-                    onEdit={(task) => {
-                      setEditingTask(task);
-                      setShowEditModal(true);
-                    }}
-                    isDeleting={deletingTaskId === task.id}
-                  />
-                ))}
+                <SortableContext
+                  items={columnTasks.map((t) => t.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {columnTasks.map((task) => (
+                    <DraggableTaskCard
+                      key={task.id}
+                      task={task}
+                      onStatusChange={handleStatusChange}
+                      onDelete={handleDelete}
+                      onEdit={(task) => {
+                        setEditingTask(task);
+                        setShowEditModal(true);
+                      }}
+                      isDeleting={deletingTaskId === task.id}
+                    />
+                  ))}
+                </SortableContext>
               </DroppableColumn>
             );
           })}

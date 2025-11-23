@@ -1,5 +1,6 @@
 import React from "react";
-import { useDraggable } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import TaskCard from "./TaskCard";
 
 import { Task } from "../types";
@@ -19,18 +20,23 @@ export default function DraggableTaskCard({
   onEdit,
   isDeleting,
 }: DraggableTaskCardProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: task.id,
-      data: { task },
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: task.id,
+    data: { task },
+  });
 
-  const style = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        touchAction: "none",
-      }
-    : { touchAction: "none" };
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    touchAction: "none",
+  };
 
   if (isDragging) {
     return (
@@ -51,10 +57,10 @@ export default function DraggableTaskCard({
   }
 
   return (
-    <div 
-      ref={setNodeRef} 
-      style={style} 
-      {...listeners} 
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
       {...attributes}
       className="cursor-grab active:cursor-grabbing"
     >
