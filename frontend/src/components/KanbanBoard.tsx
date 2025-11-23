@@ -26,7 +26,7 @@ import { setTasks, updateTask, deleteTask, moveTaskOptimistic } from "../store/t
 import TaskCard from "./TaskCard";
 import DraggableTaskCard from "./DraggableTaskCard";
 import { toast } from "sonner";
-import TaskModal from "./TaskModal";
+import EditTaskDialog from "./dashboard/EditTaskDialog";
 
 function DroppableColumn({
   id,
@@ -82,17 +82,20 @@ export default function KanbanBoard() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
 
-  const handleUpdateTask = async (task: Task) => {
+  const handleUpdateTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingTask) return;
+    
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/tasks/${task.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/tasks/${editingTask.id}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(task),
+          body: JSON.stringify(editingTask),
         }
       );
       if (res.ok) {
@@ -308,15 +311,15 @@ export default function KanbanBoard() {
         </DragOverlay>
       </DndContext>
 
-      <TaskModal
+      <EditTaskDialog
         isOpen={showEditModal}
-        onClose={() => {
-          setShowEditModal(false);
-          setEditingTask(null);
+        onOpenChange={(open) => {
+          setShowEditModal(open);
+          if (!open) setEditingTask(null);
         }}
-        onSave={handleUpdateTask}
-        initialTask={editingTask}
-        title="Edit Task"
+        onUpdateTask={handleUpdateTask}
+        editingTask={editingTask}
+        setEditingTask={setEditingTask}
       />
     </div>
   );

@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -45,7 +46,7 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
-      alert("Invalid credentials");
+      toast.error("Invalid credentials");
     } finally {
       setIsLoading(false);
     }

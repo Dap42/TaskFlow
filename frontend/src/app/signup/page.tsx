@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -40,8 +41,9 @@ export default function SignupPage() {
       if (!res.ok) throw new Error("Signup failed");
 
       router.push("/login");
+      toast.success("Account created successfully");
     } catch (error) {
-      alert("Signup failed");
+      toast.error("Signup failed");
     } finally {
       setIsLoading(false);
     }
