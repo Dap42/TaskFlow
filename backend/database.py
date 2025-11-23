@@ -6,6 +6,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+if DATABASE_URL:
+    # Ensure we use the correct async driver
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+    elif DATABASE_URL.startswith("postgresql://"):
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+    
+    # Fix SSL parameter for asyncpg (it prefers ssl=require over sslmode=require)
+    if "sslmode=require" in DATABASE_URL:
+        DATABASE_URL = DATABASE_URL.replace("sslmode=require", "ssl=require")
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 
