@@ -199,7 +199,9 @@ export default function CalendarPage() {
                             <div
                               className={`text-xs p-1 rounded ${getPriorityColor(
                                 task.priority
-                              )} text-white truncate hover:opacity-80 transition-opacity cursor-pointer`}
+                              )} text-white truncate hover:opacity-80 transition-opacity cursor-pointer ${
+                                task.status === "completed" ? "line-through opacity-70" : ""
+                              }`}
                               title={task.title}
                             >
                               {task.title}

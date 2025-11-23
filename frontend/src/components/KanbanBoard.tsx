@@ -43,7 +43,7 @@ function DroppableColumn({
   return (
     <div
       ref={setNodeRef}
-      className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl min-w-[320px] flex flex-col gap-4 h-full shadow-inner overflow-x-hidden"
+      className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl min-w-[300px] w-full flex flex-col gap-4 h-full shadow-inner overflow-x-hidden"
     >
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-lg font-bold text-gray-700 dark:text-gray-200 capitalize flex items-center gap-2">
@@ -260,7 +260,7 @@ export default function KanbanBoard() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-6 p-4 min-w-max">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 min-w-full h-full">
           {columns.map((colId) => {
             const columnTasks = tasks.filter(
               (task) =>
