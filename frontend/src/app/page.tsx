@@ -39,6 +39,7 @@ import { useTheme } from "next-themes";
 import { useDispatch } from "react-redux";
 import { login } from "@/store/authSlice";
 import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
 
 export default function Home() {
   const router = useRouter();
@@ -108,11 +109,11 @@ export default function Home() {
 
         // Auto login after signup or switch to login tab
         setIsLogin(true);
-        alert("Account created! Please log in.");
+        toast.success("Account created! Please log in.");
       }
     } catch (error) {
       console.error("Auth error:", error);
-      alert("Authentication failed. Please check your credentials.");
+      toast.error("Authentication failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
