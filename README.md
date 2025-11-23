@@ -2,7 +2,13 @@
 
 ![TaskFlow Banner](./screenshots/banner.png)
 
-TaskFlow is a production-grade, full-stack task management application designed to help users organize their life and work efficiently. Built with modern technologies, it features secure authentication, real-time task tracking, and AI-powered productivity insights.
+TaskFlow is a full-stack task management application designed to help users organize their life and work efficiently. Built with modern technologies, it features secure authentication, real-time task tracking, and AI-powered productivity insights.
+
+### 🔗 Live Deployments
+- **Frontend:** [https://task-flow-rare.vercel.app/](https://task-flow-rare.vercel.app/)
+- **Backend API:** [https://taskflow-production-a883.up.railway.app/](https://taskflow-production-a883.up.railway.app/)
+
+> ✅ **AI Feature Status:** Fully Implemented (Weekly Summaries & Insights)
 
 ## 🚀 Features
 
@@ -32,6 +38,10 @@ TaskFlow is a production-grade, full-stack task management application designed 
 - **Language**: TypeScript
 - **Styling**: TailwindCSS, Shadcn/UI
 - **State Management**: Redux Toolkit
+- **Drag & Drop**: @dnd-kit (Core, Sortable, Utilities)
+- **Notifications**: Sonner (Toast)
+- **Markdown**: React Markdown (for AI summaries)
+- **Date Handling**: Date-fns
 - **Animations**: Framer Motion
 - **Icons**: Lucide React
 
@@ -41,6 +51,29 @@ TaskFlow is a production-grade, full-stack task management application designed 
 - **ORM**: SQLAlchemy (Async)
 - **Auth**: Python-Jose (JWT)
 - **AI Integration**: Google Gemini API
+- **Documentation**: Swagger UI (Auto-generated)
+
+---
+
+## 📂 Project Structure
+
+```
+├── backend/
+│   ├── routers/         # API Endpoints (Auth, Tasks, AI)
+│   ├── services/        # Business Logic & CRUD
+│   ├── models.py        # Database Models
+│   ├── schemas.py       # Pydantic Schemas
+│   └── main.py          # App Entry Point
+├── frontend/
+│   ├── src/
+│   │   ├── app/         # Next.js App Router Pages
+│   │   ├── components/  # Reusable UI Components
+│   │   ├── hooks/       # Custom React Hooks
+│   │   ├── store/       # Redux State Management
+│   │   └── lib/         # Utilities (API, Utils)
+│   └── public/          # Static Assets
+└── README.md
+```
 
 ---
 
@@ -78,21 +111,29 @@ Powerful task organization with multiple views and smart filtering.
   </tr>
 </table>
 
-### Kanban Board & Calendar
-Visualize your workflow with drag-and-drop Kanban and calendar views.
+### Kanban Board
+Visualize your workflow with drag-and-drop Kanban boards.
 
 <table>
   <tr>
     <td width="50%">
-      <img src="./screenshots/kanban-board-page.png" alt="Kanban Board" />
-      <p align="center"><b>Kanban Board</b></p>
+      <img src="./screenshots/kanban-board-light.png" alt="Kanban Board Light" />
+      <p align="center"><b>Kanban - Light Mode</b></p>
     </td>
     <td width="50%">
-      <img src="./screenshots/calendar-page.png" alt="Calendar View" />
-      <p align="center"><b>Calendar View</b></p>
+      <img src="./screenshots/kanban-board-dark.png" alt="Kanban Board Dark" />
+      <p align="center"><b>Kanban - Dark Mode</b></p>
     </td>
   </tr>
 </table>
+
+### Calendar View
+Track deadlines effectively with the monthly calendar view.
+
+<p align="center">
+  <img src="./screenshots/calendar-page.png" alt="Calendar View" width="800" />
+</p>
+<p align="center"><b>Calendar View</b></p>
 
 ### Task Details & Subtasks
 Comprehensive task management with countdown timers and subtask tracking.
@@ -153,6 +194,7 @@ GEMINI_MODEL=gemini-2.5-flash
 uvicorn main:app --reload
 ```
 *Server will start at `http://localhost:8000`*
+*API Documentation available at `http://localhost:8000/docs`*
 
 ### 2. Frontend Setup
 ```bash
