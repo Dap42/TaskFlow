@@ -62,7 +62,7 @@ function DroppableColumn({
           {count}
         </span>
       </div>
-      <div className="flex flex-col gap-3 overflow-y-auto max-h-[calc(100vh-200px)] pr-2 custom-scrollbar">
+      <div className="flex flex-col gap-3 overflow-y-auto max-h-[calc(100vh-200px)] pr-2 custom-scrollbar scrollbar-hide">
         {children}
       </div>
     </div>
@@ -121,8 +121,14 @@ export default function KanbanBoard() {
 
   const columns = ["pending", "in_progress", "completed"];
 
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
+
   const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
+    const task = tasks.find((t) => t.id === event.active.id);
+    if (task) {
+      setActiveId(event.active.id as string);
+      setActiveTask(task);
+    }
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -142,7 +148,6 @@ export default function KanbanBoard() {
     // Dropping over another task
     if (isActiveTask && isOverTask) {
       if (isActiveTask.status !== isOverTask.status) {
-        // Optimistic update for drag over different columns
         dispatch(
           moveTaskOptimistic({
             id: activeId as string,
@@ -164,27 +169,29 @@ export default function KanbanBoard() {
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
+    const { over } = event;
     setActiveId(null);
+    const currentTask = activeTask; // Capture the task state from start of drag
+    setActiveTask(null);
 
-    if (!over) return;
+    if (!over || !currentTask) return;
 
-    const activeTask = tasks.find((t) => t.id === active.id);
     const overId = over.id;
+    let newStatus = "";
 
-    if (!activeTask) return;
-
-    // If dropped over a column
+    // Determine new status
     if (columns.includes(overId as string)) {
-      if (activeTask.status !== overId) {
-        await handleStatusChange(activeTask.id, overId as string);
-      }
+      newStatus = overId as string;
     } else {
-       // If dropped over another task, check if it's in a different column
-       const overTask = tasks.find((t) => t.id === overId);
-       if (overTask && activeTask.status !== overTask.status) {
-          await handleStatusChange(activeTask.id, overTask.status);
-       }
+      const overTask = tasks.find((t) => t.id === overId);
+      if (overTask) {
+        newStatus = overTask.status;
+      }
+    }
+
+    // Only call API if the status actually changed from the START of the drag
+    if (newStatus && currentTask.status !== newStatus) {
+      await handleStatusChange(currentTask.id, newStatus);
     }
   };
 
@@ -204,13 +211,19 @@ export default function KanbanBoard() {
       if (res.ok) {
         const updatedTask = await res.json();
         dispatch(updateTask(updatedTask));
-        toast.success(`Task moved to ${status.replace("_", " ")}`);
+        toast.success(`Moved to ${status.replace("_", " ")}`, {
+          duration: 1500, // Short duration
+        });
       }
     } catch (error) {
       console.error("Failed to update task status", error);
       toast.error("Failed to move task");
+      // Revert optimistic update on failure (optional but recommended)
+      // For now, we'll just show the error
     }
   };
+
+
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure?")) return;
