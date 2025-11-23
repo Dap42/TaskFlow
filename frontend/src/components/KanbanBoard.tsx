@@ -43,7 +43,7 @@ function DroppableColumn({
   return (
     <div
       ref={setNodeRef}
-      className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl min-w-[300px] w-full flex flex-col gap-4 h-full shadow-inner overflow-x-hidden"
+      className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl min-w-[300px] w-full flex flex-col gap-4 h-full shadow-inner overflow-x-hidden relative"
     >
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-lg font-bold text-gray-700 dark:text-gray-200 capitalize flex items-center gap-2">
@@ -62,9 +62,13 @@ function DroppableColumn({
           {count}
         </span>
       </div>
-      <div className="flex flex-col gap-3 overflow-y-auto max-h-[calc(100vh-200px)] pr-2 custom-scrollbar scrollbar-hide">
+      <div className="flex flex-col gap-3 overflow-y-auto max-h-[calc(100vh-200px)] pr-2 pb-4 px-1 custom-scrollbar scrollbar-hide">
         {children}
       </div>
+      {/* Top Gradient Fade */}
+      <div className="absolute top-14 left-0 right-0 h-10 bg-gradient-to-b from-gray-300 to-transparent dark:from-gray-800 pointer-events-none" />
+      {/* Bottom Gradient Fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-gray-200 to-transparent dark:from-gray-800 pointer-events-none rounded-b-xl" />
     </div>
   );
 }
