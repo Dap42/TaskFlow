@@ -26,15 +26,16 @@ export default function DraggableTaskCard({
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        touchAction: "none",
       }
-    : undefined;
+    : { touchAction: "none" };
 
   if (isDragging) {
     return (
       <div
         ref={setNodeRef}
         style={style}
-        className="opacity-30"
+        className="opacity-30 cursor-grabbing"
       >
         <TaskCard
           task={task}
@@ -48,7 +49,13 @@ export default function DraggableTaskCard({
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      {...listeners} 
+      {...attributes}
+      className="cursor-grab active:cursor-grabbing"
+    >
       <TaskCard
         task={task}
         onStatusChange={onStatusChange}
